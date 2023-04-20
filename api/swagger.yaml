@@ -1,0 +1,40 @@
+swagger: "2.0"
+
+info:
+  title: gochan
+  description: API for forum
+  version: 1.0.0
+basePath: /api/v1
+consumes:
+  - application/json
+produces:
+  - application/json
+schemes:
+  - http
+paths:
+  /login:
+    post:
+      description: login
+      parameters:
+        - name: payload
+          required: true
+          in: body
+          schema:
+            type: object
+            required:
+              - login
+              - password
+            properties:
+              login:
+                type: string
+              password:
+                type: string
+
+      responses:
+        '200':
+          description: sms delayed task cancelled
+          schema:
+            type: object
+            properties:
+              uid:
+                type: string
