@@ -2,6 +2,7 @@ package headers
 
 import (
 	"net/http"
+	"strconv"
 
 	threads_controllers "gochan/internal/controllers/threads"
 	"gochan/pkg/auth"
@@ -69,5 +70,16 @@ func (h *Headers) AddHeadersThreads() {
 				"message": "Invalid password",
 			})
 		}
+	})
+	h.Headers.GET("/thread/:limit", func(c *gin.Context) {
+		limit, err := strconv.Atoi(c.Param("limit"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err":     true,
+				"message": "Invalid params in request",
+			})
+			return
+		}
+		c.JSON(http.StatusOK, threads_controllers.GetAllThreads(h.thread, int32(limit)))
 	})
 }

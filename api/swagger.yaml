@@ -92,7 +92,46 @@ paths:
           description: "Response error"
           schema:
             $ref: '#/definitions/responses'
-
+  /thread/{limit}:
+    get:
+      description: Get a thread with limit
+      summary: Get a thread with limit
+      parameters:
+      - in: path
+        name: limit
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: "Response success"
+          schema:
+            $ref: '#/definitions/threadsArray'
+        '400':
+          description: "Response error"
+          schema:
+            $ref: '#/definitions/responses'
+  /post/{threadId}/{limit}:
+    get:
+      description: Get a thread and posts with limit
+      summary: Get a thread and posts with limit
+      parameters:
+      - in: path
+        name: threadId
+        schema:
+          type: string
+      - in: path
+        name: limit
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: "Response success"
+          schema:
+            $ref: '#/definitions/threadsArray'
+        '400':
+          description: "Response error"
+          schema:
+            $ref: '#/definitions/responses'
 
 definitions:
   responses:
@@ -107,3 +146,27 @@ definitions:
     properties:
       idThread:
         type: integer
+  thread:
+    type: object
+    properties:
+      head:
+        type: string
+      id:
+        type: string
+      img:
+        type: string
+      text:
+        type: string
+  threadsArray:
+    type: array
+    items:
+      type: object
+      properties:
+        head:
+          type: string
+        id:
+          type: string
+        img:
+          type: string
+        text:
+          type: string

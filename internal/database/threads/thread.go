@@ -41,7 +41,7 @@ func (t *Thread) createTableOrNotExists() {
 func (t *Thread) CreateThread(head, text, passwordHash, img string) (string, error) {
 	var id string
 	raw, err := t.Db.Query(`
-	INSERT INTO threads (head, text, password_hash, img) VALUES ($1, $2, $3, $4) RETURN id
+	INSERT INTO threads (head, text, password_hash, img) VALUES ($1, $2, $3, $4) RETURNING id
 	`, head, text, passwordHash, img)
 	if err != nil {
 		return "", err
@@ -70,4 +70,38 @@ func (t *Thread) CheckPassword(id, passwordHash string) bool {
 		}
 	}
 	return passwordHashInThread == passwordHash
+}
+
+func (t *Thread) GetThreads(limit int32) []map[string]interface{} {
+	result := make([]map[string]interface{}, 0, limit)
+	var id, head, text, img string
+	raw, _ := t.Db.Query(`SELECT id, head, text, img FROM threads WHERE thread_id IS NULL LIMIT $1`, limit)
+	defer raw.Close()
+	for raw.Next() {
+		raw.Scan(&id, &head, &text, &img)
+		m := make(map[string]interface{}, 4)
+		m["id"] = id
+		m["head"] = head
+		m["text"] = text
+		m["img"] = img
+		result = append(result, m)
+	}
+	return result
+}
+
+func (t *Thread) GetThreadAndPosts(threadId string, limit int32) []map[string]interface{} {
+	result := make([]map[string]interface{}, 0, limit)
+	var id, head, text, img string
+	raw, _ := t.Db.Query(`SELECT id, head, text, img FROM threads WHERE id = $1 OR thread_id = $1 ORDER BY id LIMIT $2`, threadId, limit)
+	defer raw.Close()
+	for raw.Next() {
+		raw.Scan(&id, &head, &text, &img)
+		m := make(map[string]interface{}, 5)
+		m["id"] = id
+		m["head"] = head
+		m["text"] = text
+		m["img"] = img
+		result = append(result, m)
+	}
+	return result
 }
