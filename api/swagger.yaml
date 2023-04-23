@@ -79,9 +79,12 @@ paths:
           schema:
             type: object
             required:
-              - passwordHash
+              - password
+              - threadId
             properties:
-              passwordHash:
+              password:
+                type: string
+              threadId:
                 type: string
       responses:
         '200':
