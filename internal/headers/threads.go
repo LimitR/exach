@@ -3,6 +3,7 @@ package headers
 import (
 	"net/http"
 
+	threads_controllers "gochan/internal/controllers/threads"
 	"gochan/pkg/auth"
 
 	"github.com/gin-gonic/gin"
@@ -30,8 +31,16 @@ func (h *Headers) AddHeadersThreads() {
 				"err":     true,
 				"message": "Invalid body request",
 			})
+			return
 		}
-		id := h.thread.CreateThread(requestBody.Head, requestBody.Text, requestBody.PasswordHash, requestBody.Img)
+		id, err := threads_controllers.CreateThread(h.thread, requestBody.Head, requestBody.Text, requestBody.PasswordHash, requestBody.Img)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"err":     true,
+				"message": "Error in database",
+			})
+			return
+		}
 		c.JSON(http.StatusCreated, gin.H{
 			"id": id,
 		})
@@ -43,9 +52,9 @@ func (h *Headers) AddHeadersThreads() {
 				"err":     true,
 				"message": "Invalid body request",
 			})
+			return
 		}
-		passwordHash := auth.CreateSum(requestBody.Password)
-		if h.thread.CheckPassword(requestBody.Id, passwordHash) {
+		if threads_controllers.Login(h.thread, requestBody.Id, requestBody.Password) {
 			jwt, _ := auth.GenerateJWTWithClaims(map[string]string{
 				"id": requestBody.Id,
 			})

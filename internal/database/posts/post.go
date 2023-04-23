@@ -38,8 +38,9 @@ func (t *Post) createTableOrNotExists() {
 		);`)
 }
 
-func (t *Post) CreatePost(text, img, thread_id string) {
-	t.Db.Exec(`
+func (t *Post) CreatePost(text, img, thread_id string) error {
+	_, err := t.Db.Exec(`
 	INSERT INTO threads (text, img, thread_id) VALUES ($1, $2, $3)
 	`, text, img, thread_id)
+	return err
 }

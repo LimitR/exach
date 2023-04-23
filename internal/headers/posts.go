@@ -3,13 +3,15 @@ package headers
 import (
 	"net/http"
 
+	posts_controllers "gochan/internal/controllers/posts"
+
 	"github.com/gin-gonic/gin"
 )
 
 type PostRequest struct {
-	Text    string `json:"text"`
-	Img     string `json:"img"`
-	TreadID string `json:"threadId"`
+	Text     string `json:"text"`
+	Img      string `json:"img"`
+	ThreadID string `json:"threadId"`
 }
 
 func (h *Headers) AddHeadersPost() {
@@ -21,6 +23,15 @@ func (h *Headers) AddHeadersPost() {
 				"message": "Invalid body request",
 			})
 		}
-		h.post.CreatePost(requestBody.Text, requestBody.Img, requestBody.TreadID)
+		if err := posts_controllers.CreatePost(h.post, requestBody.Text, requestBody.Img, requestBody.ThreadID); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"err":     true,
+				"message": "Error in database",
+			})
+		}
+		c.JSON(http.StatusCreated, gin.H{
+			"err":     false,
+			"message": "Success create post",
+		})
 	})
 }
