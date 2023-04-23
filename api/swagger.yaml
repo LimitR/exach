@@ -12,9 +12,9 @@ produces:
 schemes:
   - http
 paths:
-  /login:
+  /post/create:
     post:
-      description: login
+      description: Create post
       parameters:
         - name: payload
           required: true
@@ -22,19 +22,88 @@ paths:
           schema:
             type: object
             required:
-              - login
-              - password
+              - text
+              - img
+              - threadId
             properties:
-              login:
+              text:
                 type: string
-              password:
+              img:
                 type: string
-
+              threadId:
+                type: string
       responses:
         '200':
-          description: sms delayed task cancelled
+          description: "Response"
+          schema:
+            $ref: '#/definitions/responses'
+  /thread/create:
+    post:
+      description: Create thread
+      parameters:
+        - name: payload
+          required: true
+          in: body
           schema:
             type: object
+            required:
+              - text
+              - img
+              - head
+              - passwordHash
             properties:
-              uid:
+              text:
                 type: string
+              img:
+                type: string
+              head:
+                type: string
+              passwordHash:
+                type: string
+      responses:
+        '200':
+          description: "Response success"
+          schema:
+            $ref: '#/definitions/createThread'
+        '400':
+          description: "Response error"
+          schema:
+            $ref: '#/definitions/responses'
+  /thread/login:
+    post:
+      description: Login in thread
+      parameters:
+        - name: payload
+          required: true
+          in: body
+          schema:
+            type: object
+            required:
+              - passwordHash
+            properties:
+              passwordHash:
+                type: string
+      responses:
+        '200':
+          description: "Response success"
+          schema:
+            $ref: '#/definitions/responses'
+        '400':
+          description: "Response error"
+          schema:
+            $ref: '#/definitions/responses'
+
+
+definitions:
+  responses:
+    type: object
+    properties:
+      err:
+        type: boolean
+      message:
+        type: string
+  createThread:
+    type: object
+    properties:
+      idThread:
+        type: integer

@@ -1,17 +1,12 @@
 package main
 
 import (
-	"gochan/internal/database/posts"
-	"gochan/internal/headers"
+	servers "gochan/internal/server"
 
-	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	r := gin.Default()
-	p := posts.NewPost()
-	h := headers.NewHeaders(r, p)
-	h.AddPost()
-	h.Headers.Run("localhost:5000")
+	s := servers.NewServer()
+	s.Run()
 }

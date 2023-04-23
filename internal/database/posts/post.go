@@ -38,8 +38,8 @@ func (t *Post) createTableOrNotExists() {
 		);`)
 }
 
-func (t *Post) CreatePost(text, img string) {
+func (t *Post) CreatePost(text, img, thread_id string) {
 	t.Db.Exec(`
-	INSERT INTO threads (text, img) VALUES ($1, $2)
-	`, text, img)
+	INSERT INTO threads (text, img, thread_id) VALUES ($1, $2, $3)
+	`, text, img, thread_id)
 }

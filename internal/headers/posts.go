@@ -1,23 +1,26 @@
 package headers
 
 import (
-	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type PostRequest struct {
-	Text string `json:"text"`
-	Img  string `json:"img"`
+	Text    string `json:"text"`
+	Img     string `json:"img"`
+	TreadID string `json:"threadId"`
 }
 
-func (h *Headers) AddPost() {
-	h.Headers.POST("/create/post", func(c *gin.Context) {
+func (h *Headers) AddHeadersPost() {
+	h.Headers.POST("/post/create", func(c *gin.Context) {
 		var requestBody PostRequest
 		if err := c.BindJSON(&requestBody); err != nil {
-			log.Fatal(err)
-			return
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err":     true,
+				"message": "Invalid body request",
+			})
 		}
-		h.post.CreatePost(requestBody.Text, requestBody.Img)
+		h.post.CreatePost(requestBody.Text, requestBody.Img, requestBody.TreadID)
 	})
 }

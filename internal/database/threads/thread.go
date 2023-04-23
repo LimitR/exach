@@ -38,8 +38,33 @@ func (t *Thread) createTableOrNotExists() {
 		);`)
 }
 
-func (t *Thread) CreateThread(head, text, passwordHash, img string) {
-	t.Db.Exec(`
-	INSERT INTO threads (head, text, password_hash, img) VALUES ($1, $2, $3, $4)
+func (t *Thread) CreateThread(head, text, passwordHash, img string) string {
+	var id string
+	raw, _ := t.Db.Query(`
+	INSERT INTO threads (head, text, password_hash, img) VALUES ($1, $2, $3, $4) RETURN id
 	`, head, text, passwordHash, img)
+	defer raw.Close()
+	for raw.Next() {
+		err := raw.Scan(&id)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	return id
+}
+
+func (t *Thread) CheckPassword(id, passwordHash string) bool {
+	var passwordHashInThread string
+	raw, err := t.Db.Query(`SELECT password_hash FROM threads WHERE id = $1`, id)
+	if err != nil {
+		return false
+	}
+	defer raw.Close()
+	for raw.Next() {
+		err := raw.Scan(&passwordHashInThread)
+		if err != nil {
+			return false
+		}
+	}
+	return passwordHashInThread == passwordHash
 }
