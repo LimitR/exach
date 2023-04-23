@@ -74,7 +74,7 @@ func (t *Thread) CheckPassword(id, passwordHash string) bool {
 
 func (t *Thread) GetThreads(limit int32) []map[string]interface{} {
 	result := make([]map[string]interface{}, 0, limit)
-	var id, head, text, img string
+	var id, head, text, img interface{}
 	raw, _ := t.Db.Query(`SELECT id, head, text, img FROM threads WHERE thread_id IS NULL LIMIT $1`, limit)
 	defer raw.Close()
 	for raw.Next() {
@@ -91,8 +91,8 @@ func (t *Thread) GetThreads(limit int32) []map[string]interface{} {
 
 func (t *Thread) GetThreadAndPosts(threadId string, limit int32) []map[string]interface{} {
 	result := make([]map[string]interface{}, 0, limit)
-	var id, head, text, img string
-	raw, _ := t.Db.Query(`SELECT id, head, text, img FROM threads WHERE id = $1 OR thread_id = $1 ORDER BY id LIMIT $2`, threadId, limit)
+	var id, head, text, img interface{}
+	raw, _ := t.Db.Query(`SELECT id, head, text, img FROM threads WHERE id = $1 OR thread_id = $1 LIMIT $2`, threadId, limit)
 	defer raw.Close()
 	for raw.Next() {
 		raw.Scan(&id, &head, &text, &img)
