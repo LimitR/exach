@@ -3,8 +3,7 @@ package servers
 import (
 	"log"
 
-	"gochan/internal/database/posts"
-	"gochan/internal/database/threads"
+	"gochan/internal/database/repository"
 	"gochan/internal/headers"
 
 	"github.com/gin-gonic/gin"
@@ -26,9 +25,8 @@ func (s *Server) Run() {
 		log.Fatal(err)
 	}
 	r := gin.Default()
-	p := posts.NewPost()
-	t := threads.NewThread()
-	h := headers.NewHeaders(r, p, t)
+	repo := repository.NewRepo(secret["DB_DRIVER"], secret["DATA_SOURCE_NAME"])
+	h := headers.NewHeaders(r, repo)
 	h.AddHeadersPost()
 	h.AddHeadersThreads()
 	h.Headers.Run(secret["HOST"] + ":" + secret["PORT"])

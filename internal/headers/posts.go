@@ -26,7 +26,7 @@ func (h *Headers) AddHeadersPost() {
 			})
 			return
 		}
-		if err := posts_controllers.CreatePost(h.post, requestBody.Text, requestBody.Img, requestBody.ThreadID); err != nil {
+		if err := posts_controllers.CreatePost(h.Repo, requestBody.Text, requestBody.Img, requestBody.ThreadID); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"err":     true,
 				"message": "Error in database",
@@ -48,6 +48,6 @@ func (h *Headers) AddHeadersPost() {
 			})
 			return
 		}
-		c.JSON(http.StatusOK, threads_controllers.GetThreadAndPosts(h.thread, threadId, int32(limit)))
+		c.JSON(http.StatusOK, threads_controllers.GetThreadAndPosts(h.Repo, threadId, int32(limit)))
 	})
 }

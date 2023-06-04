@@ -1,9 +1,9 @@
 package posts_controllers
 
 import (
-	"gochan/internal/database/posts"
+	"gochan/internal/database/repository"
 )
 
-func CreatePost(h *posts.Post, text, img, threadId string) error {
-	return h.CreatePost(text, img, threadId)
+func CreatePost(h *repository.Repo, text, img, threadId string) error {
+	return h.Post().CreatePost(text, img, threadId)
 }
