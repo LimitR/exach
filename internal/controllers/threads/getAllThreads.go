@@ -1,7 +1,9 @@
 package threads_controllers
 
-import "gochan/internal/database/threads"
+import (
+	"gochan/internal/database/repository"
+)
 
-func GetAllThreads(h *threads.Thread, limit int32) []map[string]interface{} {
-	return h.GetThreads(limit)
+func GetAllThreads(h *repository.Repo, limit int32) []repository.Thread {
+	return h.Thread().GetThreads(limit)
 }

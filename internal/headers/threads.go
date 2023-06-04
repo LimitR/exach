@@ -34,7 +34,7 @@ func (h *Headers) AddHeadersThreads() {
 			})
 			return
 		}
-		id, err := threads_controllers.CreateThread(h.thread, requestBody.Head, requestBody.Text, requestBody.PasswordHash, requestBody.Img)
+		id, err := threads_controllers.CreateThread(h.Repo, requestBody.Head, requestBody.Text, requestBody.PasswordHash, requestBody.Img)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"err":     true,
@@ -55,7 +55,7 @@ func (h *Headers) AddHeadersThreads() {
 			})
 			return
 		}
-		if threads_controllers.Login(h.thread, requestBody.Id, requestBody.Password) {
+		if threads_controllers.Login(h.Repo, requestBody.Id, requestBody.Password) {
 			jwt, _ := auth.GenerateJWTWithClaims(map[string]string{
 				"id": requestBody.Id,
 			})
@@ -80,6 +80,6 @@ func (h *Headers) AddHeadersThreads() {
 			})
 			return
 		}
-		c.JSON(http.StatusOK, threads_controllers.GetAllThreads(h.thread, int32(limit)))
+		c.JSON(http.StatusOK, threads_controllers.GetAllThreads(h.Repo, int32(limit)))
 	})
 }

@@ -1,22 +1,19 @@
 package headers
 
 import (
-	"gochan/internal/database/posts"
-	"gochan/internal/database/threads"
+	"gochan/internal/database/repository"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Headers struct {
 	Headers *gin.Engine
-	post    *posts.Post
-	thread  *threads.Thread
+	Repo    *repository.Repo
 }
 
-func NewHeaders(r *gin.Engine, p *posts.Post, t *threads.Thread) *Headers {
+func NewHeaders(r *gin.Engine, repo *repository.Repo) *Headers {
 	return &Headers{
 		Headers: r,
-		post:    p,
-		thread:  t,
+		Repo:    repo,
 	}
 }
