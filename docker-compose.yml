@@ -1,21 +1,38 @@
 version: '3.7'
 
 services:
-  sqlite3:
-    image: nouchka/sqlite3:latest
-    stdin_open: true
-    tty: true
-    volumes:
-      - ./starage.db:/build
   web-app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./docker/frontend-nginx.dockerfile
     ports:
       - 80:80
       - 443:443
     networks:
       - net
+  database:
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    networks:
+      - net
+  server:
+    build:
+      context: .
+      dockerfile: ./docker/gochan.dockerfile
+    container_name: server
+    expose:
+      - 5000
+    ports:
+      - 5000:5000
+    networks:
+      - net
+    depends_on:
+      - web-app
+      - database
   swagger-ui:
     image: swaggerapi/swagger-ui
     volumes:

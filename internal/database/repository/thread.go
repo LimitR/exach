@@ -1,9 +1,14 @@
 package repository
 
-import "github.com/jmoiron/sqlx"
+import (
+	"context"
+
+	"github.com/jmoiron/sqlx"
+)
 
 type Thread struct {
 	db            *sqlx.DB
+	ctx           context.Context
 	Id            int64  `db:"id" json:"id"`
 	Text          string `db:"text" json:"text"`
 	Head          string `db:"head" json:"head"`
@@ -11,36 +16,28 @@ type Thread struct {
 	Img           string `db:"img" json:"img"`
 }
 
-func NewThread(db *sqlx.DB) *Thread {
-	return &Thread{db: db}
+func NewThread(db *sqlx.DB, ctx context.Context) *Thread {
+	newCtx, _ := context.WithCancel(ctx)
+	return &Thread{db: db, ctx: newCtx}
 }
 
 func (t *Thread) createTableOrNotExists() {
 	t.db.Exec(`CREATE TABLE IF NOT EXISTS threads (
-		id INTEGER PRIMARY KEY,
+		id SERIAL PRIMARY KEY,
 		head TEXT,
 		text TEXT NOT NULL,
 		thread_id TEXT,
 		password_hash TEXT,
-		img TEXT,
+		img TEXT
 		);`)
 }
 
-func (t *Thread) CreateThread(head, text, passwordHash, img string) (int64, error) {
-	raw, _ := t.db.Exec(`
-	INSERT INTO threads (head, text, password_hash, img) VALUES (?, ?, ?, ?) RETURNING id
-	`, head, text, passwordHash, img)
-	// if err != nil {
-	// 	return "", err
-	// }
-	// defer raw.Close()
-	// for raw.Next() {
-	// 	err := raw.Scan(&id)
-	// 	if err != nil {
-	// 		return "", err
-	// 	}
-	// }
-	return raw.LastInsertId()
+func (t *Thread) CreateThread(head, text, passwordHash, img string) (int, error) {
+	lastInsertId := 0
+	err := t.db.QueryRow(`
+	INSERT INTO threads (head, text, password_hash, img) VALUES ($1, $2, $3, $4) RETURNING id
+	`, head, text, passwordHash, img).Scan(&lastInsertId)
+	return lastInsertId, err
 }
 
 func (t *Thread) CheckPassword(id, passwordHash string) bool {

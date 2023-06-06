@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"log"
 
 	"github.com/jmoiron/sqlx"
@@ -8,6 +9,8 @@ import (
 
 type Repo struct {
 	db     *sqlx.DB
+	ctx    context.Context
+	cancel context.CancelFunc
 	post   *Post
 	thread *Thread
 }
@@ -18,13 +21,20 @@ func NewRepo(driver, source string) *Repo {
 		log.Fatalln(err)
 	}
 	repo := &Repo{db: db}
+	ctx, cancel := context.WithCancel(context.Background())
 
-	repo.post = NewPost(db)
-	repo.thread = NewThread(db)
+	repo.post = NewPost(db, ctx)
+	repo.thread = NewThread(db, ctx)
+	repo.ctx = ctx
+	repo.cancel = cancel
+
 	repo.post.createTableOrNotExists()
 	repo.thread.createTableOrNotExists()
-
 	return repo
+}
+
+func (r *Repo) CancelContext() {
+	r.cancel()
 }
 
 func (r *Repo) Post() *Post {
