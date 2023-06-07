@@ -1,4 +1,4 @@
-package headers
+package handlers
 
 import (
 	"net/http"
@@ -16,8 +16,8 @@ type PostRequest struct {
 	ThreadID string `json:"threadId"`
 }
 
-func (h *Headers) AddHeadersPost() {
-	h.Headers.POST("/post/create", func(c *gin.Context) {
+func (h *Handlers) AddHeadersPost() {
+	h.Handlers.POST("/post/create", func(c *gin.Context) {
 		var requestBody PostRequest
 		if err := c.BindJSON(&requestBody); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -38,7 +38,7 @@ func (h *Headers) AddHeadersPost() {
 			"message": "Success create post",
 		})
 	})
-	h.Headers.GET("/post/:threadId/:limit", func(c *gin.Context) {
+	h.Handlers.GET("/post/:threadId/:limit", func(c *gin.Context) {
 		limit, err := strconv.Atoi(c.Param("limit"))
 		threadId := c.Param("threadId")
 		if err != nil {

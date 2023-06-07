@@ -1,6 +1,7 @@
-package headers
+package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -23,9 +24,9 @@ type ThreadLoginRequest struct {
 	Password string `json:"password"`
 }
 
-func (h *Headers) AddHeadersThreads() {
+func (h *Handlers) AddHeadersThreads() {
 	secret, _ := godotenv.Read(".env")
-	h.Headers.POST("/thread/create", func(c *gin.Context) {
+	h.Handlers.POST("/thread/create", func(c *gin.Context) {
 		var requestBody ThreadCreateRequest
 		if err := c.BindJSON(&requestBody); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -40,13 +41,14 @@ func (h *Headers) AddHeadersThreads() {
 				"err":     true,
 				"message": "Error in database",
 			})
+			fmt.Println(err)
 			return
 		}
 		c.JSON(http.StatusCreated, gin.H{
 			"id": id,
 		})
 	})
-	h.Headers.POST("/thread/login", func(c *gin.Context) {
+	h.Handlers.POST("/thread/login", func(c *gin.Context) {
 		var requestBody ThreadLoginRequest
 		if err := c.BindJSON(&requestBody); err != nil {
 			c.JSON(http.StatusForbidden, gin.H{
@@ -71,7 +73,7 @@ func (h *Headers) AddHeadersThreads() {
 			})
 		}
 	})
-	h.Headers.GET("/thread/:limit", func(c *gin.Context) {
+	h.Handlers.GET("/thread/:limit", func(c *gin.Context) {
 		limit, err := strconv.Atoi(c.Param("limit"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{

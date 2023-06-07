@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/jmoiron/sqlx"
@@ -8,6 +9,7 @@ import (
 
 type Post struct {
 	db            *sqlx.DB
+	ctx           context.Context
 	Id            int64          `db:"id"`
 	Text          string         `db:"text"`
 	Thread_id     sql.NullString `db:"thread_id"`
@@ -15,15 +17,17 @@ type Post struct {
 	Img           sql.NullString `db:"img"`
 }
 
-func NewPost(db *sqlx.DB) *Post {
+func NewPost(db *sqlx.DB, ctx context.Context) *Post {
+	newCtx, _ := context.WithCancel(ctx)
 	return &Post{
-		db: db,
+		db:  db,
+		ctx: newCtx,
 	}
 }
 
 func (t *Post) createTableOrNotExists() error {
 	_, err := t.db.Exec(`CREATE TABLE IF NOT EXISTS threads (
-		id INTEGER PRIMARY KEY,
+		id SERIAL PRIMARY KEY,
 		head TEXT,
 		text TEXT NOT NULL,
 		thread_id TEXT,
@@ -35,7 +39,7 @@ func (t *Post) createTableOrNotExists() error {
 
 func (t *Post) CreatePost(text, img, thread_id string) error {
 	_, err := t.db.Exec(`
-	INSERT INTO threads (text, img, thread_id) VALUES (?, ?, ?)
+	INSERT INTO threads (text, img, thread_id) VALUES ($1, $2, $3)
 	`, text, img, thread_id)
 	return err
 }
