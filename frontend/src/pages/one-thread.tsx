@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import {useFetching} from '../../hooks/useFetching'
+import {useFetching} from '../hooks/useFetching'
 import axios from "axios";
 
 type Thread = {

@@ -1,6 +1,6 @@
 
-import exachan from '../../img/exachan.png';
-import pravdorubs from '../../img/pravdorubs.png';
+import exachan from '../img/exachan.png';
+import pravdorubs from '../img/pravdorubs.png';
 
 export default function Footer() {
     return (
