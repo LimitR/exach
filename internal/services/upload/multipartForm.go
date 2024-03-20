@@ -22,7 +22,9 @@ func (u *UploaderMultipartForm) SaveFileToDisk(file multipart.FileHeader) (strin
 
 	id, _ := uuid.NewUUID()
 
-	err = os.WriteFile(fmt.Sprintf("./assets/storage/%s_%s", id.String(), file.Filename), buffer, 0777)
+	path := fmt.Sprintf("./assets/storage/%s_%s", id.String(), file.Filename)
 
-	return "", err
+	err = os.WriteFile(path, buffer, 0777)
+
+	return path, err
 }

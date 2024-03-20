@@ -4,6 +4,7 @@ import (
 	"exach/internal/database/models"
 	service_threads "exach/internal/services/threads"
 	"exach/internal/services/upload"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -50,9 +51,9 @@ func (t *ThreadHandler) CreateNewThread(c *fiber.Ctx) error {
 
 				thread.Img = pathFile
 
-				t.threadService.CreateThread(*thread)
+				id, _ := t.threadService.CreateThread(*thread)
 
-				return c.Status(200).Redirect("/")
+				return c.Status(200).Redirect("/thread/" + strconv.Itoa(id))
 			}
 		}
 	}

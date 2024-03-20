@@ -11,8 +11,9 @@ WORKDIR /
 
 COPY --from=builder /build/main /
 COPY --from=builder /build/.env /
-COPY --from=builder /build/templates /
-COPY --from=builder /build/assets /
+COPY --from=builder /build/templates/ /templates
+COPY --from=builder /build/assets/ /assets
+COPY --from=builder /build/migrations/ /migrations
 
 ENTRYPOINT ["./main"]
 

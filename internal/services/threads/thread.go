@@ -39,3 +39,11 @@ func (t *ThreadService) GetThreads(limit int32) []models.Thread {
 	)
 	return result
 }
+
+func (t *ThreadService) GetThreadById(id int) models.Thread {
+	result := models.Thread{}
+
+	t.db.Get(&result, `SELECT * FROM threads WHERE id = $1 LIMIT 1`, id)
+
+	return result
+}

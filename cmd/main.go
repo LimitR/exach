@@ -14,12 +14,23 @@ import (
 	"github.com/gofiber/template/mustache/v2"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
+	"github.com/pressly/goose/v3"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
+
 	secret, err := godotenv.Read(".env")
 	if err != nil {
 		log.Fatal(err)
+	}
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		secret["DB_HOST"], secret["DB_PORT"], secret["POSTGRES_USER"], secret["POSTGRES_PASSWORD"], secret["POSTGRES_DB"])
+
+	db, err := sqlx.Connect(secret["DB_DRIVER"], dsn)
+	if err != nil {
+		log.Fatalln(err)
 	}
 
 	engine := mustache.New("./templates", ".mustache")
@@ -43,26 +54,29 @@ func main() {
 		}, "main")
 	})
 
-	app.Get("/admin", page_admin.LoginAdmin)
-
-	app.Get("/new/thread", page_threads.NewThread)
-
-	app.Get("/new/smiles/:id", page_smiles.Smiles)
-
-	// API
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		secret["DB_HOST"], secret["DB_PORT"], secret["POSTGRES_USER"], secret["POSTGRES_PASSWORD"], secret["POSTGRES_DB"])
-
-	db, err := sqlx.Connect(secret["DB_DRIVER"], dsn)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
 	uploader := new(upload.UploaderMultipartForm)
 
 	threadService := service_threads.NewThreadService(db)
 
 	threadHandler := handler_threads.NewThreadHandler(threadService, uploader)
+
+	pageThreadHandler := page_threads.NewPageThreadHandler(threadService)
+
+	app.Get("/admin", page_admin.LoginAdmin)
+
+	app.Get("/new/thread", pageThreadHandler.NewThread)
+
+	app.Get("/new/smiles/:id", page_smiles.Smiles)
+	app.Get("/thread/:id", pageThreadHandler.Thread)
+
+	// API
+	if err := goose.SetDialect("postgres"); err != nil {
+		panic(err)
+	}
+
+	if err := goose.Run("up", db.DB, "migrations"); err != nil {
+		panic(err)
+	}
 
 	api := app.Group("/api", func(c *fiber.Ctx) error {
 		return c.Next()
