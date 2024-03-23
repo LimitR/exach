@@ -1,0 +1,18 @@
+<div class="new_comments">
+</div>
+
+<script lang="javascript">
+let lastCommentId = {{ postId }}
+    setInterval(() => {
+        addToHtml('.new_comments', async () => {
+        try {
+            const resp = await fetch('/api/new/comments?threadId={{ postId }}&lastCommentId='+lastCommentId)
+            const responseText = await resp.text();
+            lastCommentId = Number(responseText.split("|")[0]) + 1
+            return responseText.split("|")[1]
+        } catch (err) {
+            console.log(err)
+        }
+    })    
+    }, 1000)
+</script>

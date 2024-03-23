@@ -7,6 +7,7 @@ import (
 	handler_threads "exach/internal/handlers/threads"
 	service_threads "exach/internal/services/threads"
 	"exach/internal/services/upload"
+	textmatching "exach/pkg/textMatching"
 	"fmt"
 	"log"
 
@@ -51,6 +52,7 @@ func main() {
 			"imageLogo":       "/public/img/logo.png",
 			"imagePravdorubs": "/public/img/pravdorubs.png",
 			"imageExachan":    "/public/img/exachan.png",
+			"board":           `<li><a href="/b">Бред</a></li>`,
 		}, "main")
 	})
 
@@ -67,7 +69,8 @@ func main() {
 	app.Get("/new/thread", pageThreadHandler.NewThread)
 
 	app.Get("/new/smiles/:id", page_smiles.Smiles)
-	app.Get("/thread/:id", pageThreadHandler.Thread)
+	app.Get("/:board/:id", pageThreadHandler.Thread)
+	app.Get("/:board", pageThreadHandler.GetThreads)
 
 	// API
 	if err := goose.SetDialect("postgres"); err != nil {
@@ -83,6 +86,8 @@ func main() {
 	})
 	api.Post("/new/thread", threadHandler.CreateNewThread)
 
+	api.Get("/new/comments", threadHandler.GetNewComments)
+
 	app.Use(NotFound)
 	log.Fatal(app.Listen(":3000"))
 }
@@ -90,7 +95,7 @@ func main() {
 func NotFound(c *fiber.Ctx) error {
 	return c.Status(404).Render("pages/404", fiber.Map{
 		"logo":            "/public/img/logo.png",
-		"errorText":       "Возможно тут была страница, но нам она больше не нравится",
+		"errorText":       textmatching.MatchTextToHTML("Он был удален или он настолько унылый, что не хочет отобразится.<br>Не останавливайся на этом Анон! - у нас еще много других [s]унылых[/s] интересных тредов!"),
 		"imagePravdorubs": "/public/img/pravdorubs.png",
 		"imageExachan":    "/public/img/exachan.png",
 	}, "main")

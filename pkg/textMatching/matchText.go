@@ -6,10 +6,10 @@ import (
 
 func MatchTextToHTML(text string) string {
 	exp := regexp.MustCompile(`<br>`)
-	text = exp.ReplaceAllString(text, "(\r\n)|(\n)")
+	text = exp.ReplaceAllString(text, "\n")
 
-	exp = regexp.MustCompile(`(&gt;&gt;([\d]+))`)
-	text = exp.ReplaceAllString(text, "<a href=\"#c$2\" onclick=\"comment_css('c$2');\" onmouseover=\"preview_comment(event, '$2');\">&gt;&gt;$2</a>")
+	exp = regexp.MustCompile(`(>>([\d]+))`)
+	text = exp.ReplaceAllString(text, "<a href=\"#c$2\" onclick=\"comment_css('c$2');\" onmouseover=\"preview_comment(event, '$2');\">>>$2</a>")
 
 	exp = regexp.MustCompile(`\[b\](.+?)\[/b\]`)
 	text = exp.ReplaceAllString(text, "<b>$1</b>")

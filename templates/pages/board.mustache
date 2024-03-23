@@ -1,0 +1,14 @@
+{{> templates/components/headers/menu }}
+
+
+{{#threads}}
+<div class="post" id="c{{ id }}">
+    <h1>{{postTitle}}</h1> <a href="/public/storage/{{img}}" class="text_image"><img style="width: 300px" onclick="show_image(this,'200px'); return false" src="/public/storage/{{img}}" alt=""></a> <p>{{{ text }}}</p>
+    <span class="info">Тред № {{id}}
+        <a href="/{{boardName}}/{{ id }}">Перейти в тред</a>(<span id={{id}}>{{ id }}</span>)
+        <span title="Редактировать" class="edit_image" onclick="edit_comment({{ id }})">&nbsp;</span>
+    </span>
+    <span title="Показать" class="show_image" onclick="show_hide(this)"></span>
+</div>
+{{/threads}}
+{{> templates/components/footers/footer }}

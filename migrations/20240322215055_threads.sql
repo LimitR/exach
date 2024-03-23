@@ -2,13 +2,13 @@
 -- +goose StatementBegin
 SELECT 'up SQL query';
 -- +goose StatementEnd
-CREATE TABLE IF NOT EXISTS posts (
+CREATE TABLE IF NOT EXISTS threads (
 	id SERIAL PRIMARY KEY,
-	head TEXT,
+	head TEXT DEFAULT '',
 	text TEXT NOT NULL,
-	thread_id TEXT,
-	password_hash TEXT,
-	img TEXT
+	user_name TEXT DEFAULT 'Anonymous',
+	img TEXT DEFAULT '',
+    thread_id TEXT default ''
 );
 -- +goose Down
 -- +goose StatementBegin

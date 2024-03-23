@@ -1,0 +1,32 @@
+
+
+<form id="f1" class="formNewPost" method="post"  enctype="multipart/form-data" style="display: none;" action="/api/new/thread" >
+    <div class="form">
+        <span class="form_name" id="form_name" onclick="document.getElementById(\'f1\').style.display = \'none\';"></span>
+        <div class="form_smiles" id="smiles_1">
+            <div id="banner"></div>
+        </div>
+        <input class="form_title" type="text" name="title" placeholder="Заголовок" />
+        <input type="text" name="email" size="35" maxlength="75" value="" style="display: none;">
+        <span class="form_BB_codes" onclick="BB_code('f1','[b]','[\/b]');" title="Полужирный">
+        <strong>B</strong>
+        </span>
+        <span class="form_BB_codes" onclick="BB_code('f1','[i]','[\/i]');" title="Курсив">
+        <em>I</em>
+        </span>
+        <span class="form_BB_codes" onclick="BB_code('f1','[s]','[\/s]');" title="Зачеркнутый">
+        <del>S</del>
+        </span>
+        <span class="form_BB_codes" onclick="BB_code('f1','[u]','[\/u]');" title="Подчеркнутый">
+        <ins>U</ins>
+        </span>
+        <span class="form_BB_codes" onclick="BB_code('f1','[spoiler]','[\/spoiler]');" title="Спойлер">Sp</span>
+        <span class="form_BB_codes" onclick="BB_code('f1','[quote]','[\/quote]');" title="Цитата">Q</span>
+        <span class="form_BB_codes" onclick="show_smiles('1','1')" title="Смайлы">:)</span>
+        <textarea name="text" id="form_textarea" rows="8" cols="55"></textarea>
+        <input type="text" class="form_url_file" name="www_file" maxlength="400" placeholder="URL адрес изображения"><input type="file" class="form_pc_file" name="img">
+        <input type="hidden" id="replay_id" name="id" value="" />
+        <input type="hidden" id="replay_id" name="id" value="" />
+        <input type="submit" class="form_submit" value="Отправить"/>
+    </div>
+</form>

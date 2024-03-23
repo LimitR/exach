@@ -2,24 +2,31 @@
 
 
 <div class="post" id="c{{ postId }}">
-{{postTitle}} {{{ postImg }}} <p>{{{ postText }}}</p>
-<span class="info">Тред № {{postId}}
-<a href="#" onclick="reply(this); return false">ответить</a>(<span id="ans">{{ postId }}</span>)
-<span title="Редактировать" class="edit_image" onclick="edit_comment({{ postId }})">&nbsp;</span>
-</span>
+    <h2>{{postTitle}}</h2> {{{ postImg }}} <p>{{{ postText }}}</p>
+    <span class="info">Тред № {{postId}}
+        <a href="#"
+            onclick="reply(this); document.getElementById('f1').style.display = 'block'; document.getElementById('replay_id').value = {{ postId }}; return false;">ответить</a>(<span
+            id={{postId}}>{{ postId }}</span>)
+        <span title="Редактировать" class="edit_image" onclick="edit_comment({{ postId }})">&nbsp;</span>
+    </span>
+    <span title="Показать" class="show_image" onclick="show_hide(this)"></span>
 </div>
-<div class="extra_setting" id="extra_setting"><a href="#footer" id="go_down">Вниз</a><span title="Хочу чтобы снизу"><b onclick="set_order(this, 'none');">Новые комментарии отображаются сверху</b></span></div>
-<div id="new_comments">
-<span title="Показать" class="show_image"  onclick="show_hide(this)"></span>
+<div class="extra_setting" id="extra_setting"><a href="#footer" id="go_down">Вниз</a><span title="Хочу чтобы снизу"><b
+            onclick="set_order(this, 'none');">Новые комментарии отображаются сверху</b></span></div>
 
-<script type="text/javascript">
-post_id = {{ postId }}
-last_comment_id = "";
-order_comments = 1;
-start_timer();
-</script>
+{{> templates/components/forms/form_new_post }}
+
+
+<div class="new_comments">
+{{#comments}}
+<div class="comment" id="c{{id}}">
+		<p>{{{text}}}</p>
+		<span class="info">Комментарий №{{id}} <a href="#" onclick="reply(this); document.getElementById('f1').style.display = 'block';">ответить</a></span>
+		</div>
+{{/comments}}
 </div>
 
+</div>
 
 
 {{> templates/components/footers/footer }}
